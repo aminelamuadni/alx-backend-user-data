@@ -1,0 +1,1 @@
+# 0x03. 0x00. Personal data
