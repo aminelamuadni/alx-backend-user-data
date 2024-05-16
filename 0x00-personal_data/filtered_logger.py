@@ -58,8 +58,8 @@ def get_logger() -> logging.Logger:
 
 def get_db() -> connection.MySQLConnection:
     """
-    Connects to the MySQL database using environment variables and returns the
-    connection object.
+    Connects to the MySQL database using environment variables and returns
+    the connection object.
 
     Returns:
         MySQLConnection: A connection to the database.
