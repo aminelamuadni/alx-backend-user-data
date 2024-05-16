@@ -9,7 +9,6 @@ import logging
 import os
 import mysql.connector
 from typing import List
-from mysql.connector import connection
 
 # Define PII fields
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
@@ -56,7 +55,7 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def get_db() -> connection.MySQLConnection:
+def get_db() -> mysql.connector.connection.MySQLConnection:
     """
     Connects to the MySQL database using environment variables and returns
     the connection object.
