@@ -3,6 +3,7 @@
 This module provides functionality to obfuscate specified fields in log
 messages.
 """
+
 import re
 import logging
 import os
@@ -19,13 +20,13 @@ def filter_datum(fields: List[str], redaction: str, message: str,
     Obfuscates specified fields in a log message.
 
     Arguments:
-        fields -- list of fields to obfuscate
-        redaction -- replacement value for the fields
-        message -- log message to process
-        separator -- character that separates fields in the log message
+    fields -- list of fields to obfuscate
+    redaction -- replacement value for the fields
+    message -- log message to process
+    separator -- character that separates fields in the log message
 
     Returns:
-        A log message with specified fields obfuscated.
+    A log message with specified fields obfuscated.
     """
     for field in fields:
         message = re.sub(f"{field}=.*?{separator}",
@@ -56,8 +57,8 @@ def get_logger() -> logging.Logger:
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """
-    Connects to the MySQL database using environment variables and returns the
-    connection object.
+    Connects to the MySQL database using environment variables and returns
+    the connection object.
 
     Returns:
         MySQLConnection: A connection to the database.
@@ -65,7 +66,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     db_username = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
     db_password = os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
     db_host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
-    db_name = os.getenv('PERSONAL_DATA_DB_NAME')
+    db_name = os.getenv('PERSONAL_DATA_DB_NAME', '')
 
     return mysql.connector.connect(
         user=db_username,
