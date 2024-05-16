@@ -8,6 +8,7 @@ import re
 import logging
 import os
 import mysql.connector
+from datetime import datetime
 from typing import List
 
 # Define PII fields
@@ -77,6 +78,32 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     )
 
 
+def main():
+    """ Log user data from a database, obfuscating sensitive fields. """
+    logger = get_logger()
+    connection = get_db()
+    cursor = connection.cursor()
+    query = """
+        SELECT name, email, phone, ssn, password, ip, last_login, user_agent
+        FROM users
+    """
+    cursor.execute(query)
+    results = cursor.fetchall()
+
+    for result in results:
+        ip = result[5]
+        last_login_str = datetime.strftime(result[6], "%Y-%m-%dT%H:%M:%S")
+        user_agent = result[7]
+        log_message = (
+            f"name=***; email=***; phone=***; ssn=***; password=***; "
+            f"ip={ip}; last_login={last_login_str}; user_agent={user_agent};"
+        )
+        logger.info(log_message)
+
+    cursor.close()
+    connection.close()
+
+
 class RedactingFormatter(logging.Formatter):
     """
     Redacting Formatter class that filters specified fields in log messages.
@@ -108,3 +135,7 @@ class RedactingFormatter(logging.Formatter):
         original_format = super().format(record)
         return filter_datum(self.fields, self.REDACTION, original_format,
                             self.SEPARATOR)
+
+
+if __name__ == "__main__":
+    main()
