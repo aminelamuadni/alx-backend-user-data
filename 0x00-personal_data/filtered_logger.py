@@ -6,6 +6,7 @@ messages.
 
 import logging
 import os
+import re
 import mysql.connector
 from os import environ
 from datetime import datetime
