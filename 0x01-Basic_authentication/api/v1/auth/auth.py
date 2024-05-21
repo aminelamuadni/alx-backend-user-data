@@ -31,4 +31,3 @@ class Auth:
         Method to get the current user from the request.
         """
         return None  # To be implemented later.
-
