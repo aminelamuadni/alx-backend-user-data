@@ -38,9 +38,17 @@ class Auth:
 
     def authorization_header(self, request=None) -> str:
         """
-        Retrieve the Authorization header from the Flask request object.
+        Retrieve the Authorization header from the request if available.
+
+        Args:
+            request (Request): Flask request object
+
+        Returns:
+            str: The value of the Authorization header, None if not present
         """
-        return None  # To be implemented.
+        if request is None:
+            return None
+        return request.headers.get('Authorization')
 
     def current_user(self, request=None) -> User:
         """
