@@ -20,6 +20,12 @@ def unauthorized():
     abort(401)  # This will invoke the 401 error handler
 
 
+@app_views.route('/forbidden', methods=['GET'], strict_slashes=False)
+def forbidden():
+    """Endpoint to trigger a 403 Forbidden error."""
+    abort(403)  # This will invoke the 403 error handler
+
+
 @app_views.route('/stats/', strict_slashes=False)
 def stats() -> str:
     """ GET /api/v1/stats
