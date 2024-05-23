@@ -27,21 +27,23 @@ def before_request_func():
     """
     Function to run before each request to validate authentication and
     permissions.
+    Also, assigns the current user from the request to the global request
+    context.
     """
     if auth is None:
         return  # Do nothing if no auth type is specified
 
-    # Paths that don't require authentication
     if not auth.require_auth(request.path, ['/api/v1/status/',
                                             '/api/v1/unauthorized/',
                                             '/api/v1/forbidden/']):
         return
 
-    if auth.authorization_header(request) is None:
-        abort(401)
-
-    if auth.current_user(request) is None:
-        abort(403)
+    request.current_user = auth.current_user(request)
+    if request.current_user is None:
+        if auth.authorization_header(request) is None:
+            abort(401)  # No header
+        else:
+            abort(403)  # Header present but no user found
 
 
 @app.errorhandler(401)
