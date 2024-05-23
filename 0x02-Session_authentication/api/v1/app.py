@@ -43,8 +43,9 @@ def before_request_func():
 
     request.current_user = auth.current_user(request)
     if request.current_user is None:
-        if auth.authorization_header(request) is None:
-            abort(401)  # No header
+        if auth.authorization_header(request) is None and \
+                auth.session_cookie(request) is None:
+            abort(401)  # No auth header or session cookie
         else:
             abort(403)  # Header present but no user found
 
