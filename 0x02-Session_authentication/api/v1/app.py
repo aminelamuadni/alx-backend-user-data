@@ -33,21 +33,21 @@ def before_request_func():
     Also, assigns the current user from the request to the global request
     context.
     """
-    if auth is None:
-        return  # Do nothing if no auth type is specified
+    # Paths that don't require authentication
+    excluded_paths = ['/api/v1/status/',
+                      '/api/v1/unauthorized/',
+                      '/api/v1/forbidden/',
+                      '/api/v1/auth_session/login/']
+    if auth is None or not auth.require_auth(request.path, excluded_paths):
+        return  # Skip authentication for excluded paths
 
-    if not auth.require_auth(request.path, ['/api/v1/status/',
-                                            '/api/v1/unauthorized/',
-                                            '/api/v1/forbidden/']):
-        return
+    if (auth.authorization_header(request) is None and
+            auth.session_cookie(request) is None):
+        abort(401)  # No auth header or session cookie
 
     request.current_user = auth.current_user(request)
     if request.current_user is None:
-        if auth.authorization_header(request) is None and \
-                auth.session_cookie(request) is None:
-            abort(401)  # No auth header or session cookie
-        else:
-            abort(403)  # Header present but no user found
+        abort(403)  # No user found
 
 
 @app.errorhandler(401)
