@@ -11,6 +11,18 @@ class UserSession(Base):
     """
 
     def __init__(self, *args: list, **kwargs: dict):
+        """
+        Initializes a new instance of the UserSession class.
+
+        Args:
+            *args (list): Variable length argument list.
+            **kwargs (dict): Arbitrary keyword arguments.
+
+        Attributes:
+            user_id (str): The ID of the user associated with the session.
+            session_id (str): The ID of the session.
+
+        """
         super().__init__(*args, **kwargs)
         self.user_id = kwargs.get('user_id')
         self.session_id = kwargs.get('session_id')
