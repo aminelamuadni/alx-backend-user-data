@@ -66,8 +66,6 @@ class SessionDBAuth(SessionExpAuth):
 
             return user_session.user_id
         except Exception as e:
-            # Log the exception or handle it as needed
-            print(f"Failed to retrieve user session: {e}")
             return None
 
     def destroy_session(self, request=None) -> bool:
