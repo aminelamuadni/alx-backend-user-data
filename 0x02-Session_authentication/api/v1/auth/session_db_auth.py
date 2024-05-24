@@ -11,7 +11,7 @@ class SessionDBAuth(SessionExpAuth):
     Handles session management with sessions stored in a database.
     """
 
-    def create_session(self, user_id=None):
+    def create_session(self, user_id=None) -> str:
         """
         Create a session ID for a user_id and save it to the database.
 
@@ -26,7 +26,11 @@ class SessionDBAuth(SessionExpAuth):
         session_id = super().create_session(user_id)
         if not session_id:
             return None
-        new_session = UserSession(user_id=user_id, session_id=session_id)
+        kwargs = {
+            "user_id": user_id,
+            "session_id": session_id
+        }
+        new_session = UserSession(**kwargs)
         new_session.save()
         return session_id
 
@@ -46,7 +50,7 @@ class SessionDBAuth(SessionExpAuth):
             return user_session
         return None
 
-    def destroy_session(self, request=None):
+    def destroy_session(self, request=None) -> bool:
         """
         Destroy a session based on the session ID from the request cookie.
 
