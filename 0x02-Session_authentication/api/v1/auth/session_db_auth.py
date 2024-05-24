@@ -2,6 +2,7 @@
 """
 SessionDBAuth module for managing sessions using database storage.
 """
+from datetime import datetime, timedelta
 from models.user_session import UserSession
 from api.v1.auth.session_exp_auth import SessionExpAuth
 
@@ -36,19 +37,38 @@ class SessionDBAuth(SessionExpAuth):
 
     def user_id_for_session_id(self, session_id=None):
         """
-        Retrieve a user ID from a session ID.
+        Retrieve a user ID from a session ID with consideration for session
+        expiration.
 
         Args:
             session_id (str): The session ID to retrieve the user ID for.
 
         Returns:
             int or None: The user ID associated with the session ID, or None if
-                         not found.
+            the session ID is invalid or expired.
         """
-        user_session = UserSession.search({"session_id": session_id})
-        if user_session:
-            return user_session
-        return None
+        if session_id is None or not isinstance(session_id, str):
+            return None
+
+        try:
+            user_sessions = UserSession.search({'session_id': session_id})
+            if not user_sessions:
+                return None
+
+            user_session = user_sessions[0]
+            # Calculate the expiration time
+            session_start = user_session.created_at
+            session_end = session_start + timedelta(
+                seconds=self.session_duration)
+            if session_end < datetime.now():
+                # Session has expired
+                return None
+
+            return user_session.user_id
+        except Exception as e:
+            # Log the exception or handle it as needed
+            print(f"Failed to retrieve user session: {e}")
+            return None
 
     def destroy_session(self, request=None) -> bool:
         """
