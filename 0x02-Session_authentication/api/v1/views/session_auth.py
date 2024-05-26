@@ -9,7 +9,6 @@ from flask import request, jsonify, abort, make_response
 from api.v1.views import app_views
 from models.user import User
 import os
-from api.v1.app import auth
 
 
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
@@ -18,6 +17,8 @@ def login():
     Handles the POST request for user login. It validates the user's email and
     password, and if correct, sets a session ID cookie.
     """
+    from api.v1.app import auth
+
     email = request.form.get('email')
     if not email:
         return jsonify({"error": "email missing"}), 400
