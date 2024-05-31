@@ -86,6 +86,23 @@ def logout():
     return redirect(url_for('home'))
 
 
+@app.route('/profile', methods=['GET'])
+def profile():
+    """
+    Retrieve and display the user's profile information if the session is
+    valid.
+    """
+    session_id = request.cookies.get('session_id')
+    if session_id is None:
+        abort(403, 'Session ID is missing.')
+
+    user = AUTH.get_user_from_session_id(session_id)
+    if user is None:
+        abort(403, 'Invalid session ID or user does not exist.')
+
+    return jsonify({"email": user.email})
+
+
 # Run the application if this file is executed as the main program
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
