@@ -74,15 +74,14 @@ class DB:
                 attributes.append(getattr(User, attribute))
                 values.append(value)
             else:
-                raise InvalidRequestError(
-                    f"Invalid attribute provided: {attribute}")
+                raise InvalidRequestError
 
         result = self._session.query(User).filter(
             tuple_(*attributes).in_([tuple(values)])
         ).first()
 
         if result is None:
-            raise NoResultFound("No user found with the given attributes.")
+            raise NoResultFound
 
         return result
 
@@ -109,6 +108,6 @@ class DB:
             if hasattr(user, key):
                 setattr(user, key, value)
             else:
-                raise ValueError(f"Attribute {key} not found on the User model.")
+                raise ValueError
 
         self._session.commit()
