@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """DB module
 """
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, tuple_
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
@@ -53,7 +53,8 @@ class DB:
 
     def find_user_by(self, **kwargs) -> User:
         """
-        Find and return the first user matching the provided search criteria.
+        Find and return the first user matching the provided search criteria
+        using a compound tuple query.
 
         Args:
             **kwargs: Arbitrary keyword arguments corresponding to the User
@@ -67,11 +68,18 @@ class DB:
             InvalidRequestError: If the query arguments are incorrect or
                                  invalid.
         """
-        for key in kwargs:
-            if not hasattr(User, key):
+        attributes, values = [], []
+        for attribute, value in kwargs.items():
+            if hasattr(User, attribute):
+                attributes.append(getattr(User, attribute))
+                values.append(value)
+            else:
                 raise InvalidRequestError()
 
-        result = self._session.query(User).filter_by(**kwargs).first()
+        result = self._session.query(User).filter(
+            tuple_(*attributes).in_([tuple(values)])
+        ).first()
+
         if result is None:
             raise NoResultFound()
 
