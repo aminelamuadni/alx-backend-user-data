@@ -8,6 +8,8 @@ from sqlalchemy.orm.session import Session
 
 from user import Base, User
 
+from typing import TypeVar
+
 
 class DB:
     """DB class
