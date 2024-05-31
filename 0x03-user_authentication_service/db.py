@@ -84,3 +84,30 @@ class DB:
             raise NoResultFound()
 
         return result
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """
+        Update a user's attributes based on user_id and given keyword
+        arguments.
+
+        Args:
+            user_id (int): The ID of the user to update.
+            **kwargs: Arbitrary keyword arguments representing the attributes
+                      to update.
+
+        Raises:
+            ValueError: If any provided attribute name does not exist on the
+                        User model.
+            NoResultFound: If no user is found with the provided user_id.
+        """
+        user = self.find_user_by(id=user_id)
+        if not user:
+            raise NoResultFound()
+
+        for key, value in kwargs.items():
+            if hasattr(user, key):
+                setattr(user, key, value)
+            else:
+                raise ValueError()
+
+        self._session.commit()
