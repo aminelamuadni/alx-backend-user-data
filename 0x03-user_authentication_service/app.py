@@ -121,6 +121,27 @@ def get_reset_password_token():
         abort(403, description="No user found with the provided email")
 
 
+@app.route('/reset_password', methods=['PUT'])
+def update_password():
+    """
+    Update the user's password based on a valid reset token.
+    """
+    email = request.form.get('email')
+    reset_token = request.form.get('reset_token')
+    new_password = request.form.get('new_password')
+
+    if not all([email, reset_token, new_password]):
+        return jsonify({"message": "Missing fields"}), 400
+
+    try:
+        # Attempt to update the password using the Auth class method
+        AUTH.update_password(reset_token, new_password)
+        return jsonify({"email": email, "message": "Password updated"}), 200
+    except ValueError:
+        # If the reset token is invalid or no user is found, return a 403 error
+        abort(403, description="Invalid reset token or no user found")
+
+
 # Run the application if this file is executed as the main program
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
