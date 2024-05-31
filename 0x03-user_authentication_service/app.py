@@ -2,7 +2,8 @@
 """
 A simple Flask application that returns a greeting message in JSON format.
 """
-from flask import Flask, make_response, request, jsonify, abort
+from flask import Flask, make_response, redirect, request, jsonify, abort
+from flask import url_for
 from auth import Auth
 
 # Instantiate the Auth object
@@ -62,6 +63,27 @@ def login():
     else:
         # If login is invalid, return 401 Unauthorized
         abort(401)
+
+
+@app.route('/sessions', methods=['DELETE'])
+def logout():
+    """
+    Log out a user by destroying their session and redirecting to the home
+    page.
+    """
+    session_id = request.cookies.get('session_id')
+    if not session_id:
+        abort(403, 'No session ID provided.')
+
+    user = AUTH.get_user_from_session_id(session_id)
+    if not user:
+        abort(403, 'No user found for this session.')
+
+    # Destroy the user's session
+    AUTH.destroy_session(user.id)
+
+    # Redirect to home page after successful logout
+    return redirect(url_for('home'))
 
 
 # Run the application if this file is executed as the main program
