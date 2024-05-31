@@ -2,7 +2,7 @@
 """
 A simple Flask application that returns a greeting message in JSON format.
 """
-from flask import Flask, request, jsonify, abort
+from flask import Flask, make_response, request, jsonify, abort
 from auth import Auth
 
 # Instantiate the Auth object
@@ -39,6 +39,29 @@ def users():
     except ValueError:
         # If the user already exists, return an error message
         return jsonify({"message": "email already registered"}), 400
+
+
+@app.route('/sessions', methods=['POST'])
+def login():
+    """
+    Log in a user and set the session ID in a cookie.
+    """
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    # Check if login is valid
+    if AUTH.valid_login(email, password):
+        # Create a new session
+        session_id = AUTH.create_session(email)
+
+        # Prepare response
+        response = make_response(jsonify({"email": email,
+                                          "message": "logged in"}))
+        response.set_cookie('session_id', session_id)
+        return response
+    else:
+        # If login is invalid, return 401 Unauthorized
+        abort(401)
 
 
 # Run the application if this file is executed as the main program
