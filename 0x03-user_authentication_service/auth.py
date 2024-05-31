@@ -3,6 +3,7 @@
 Authentication module for handling password security.
 """
 
+import uuid
 import bcrypt
 from db import DB
 from sqlalchemy.exc import InvalidRequestError
@@ -21,6 +22,16 @@ def _hash_password(password: str) -> bytes:
         bytes: The salted and hashed password as a byte string.
     """
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+
+
+def _generate_uuid() -> str:
+    """
+    Generate a new UUID and return it as a string.
+
+    Returns:
+        str: A new UUID as a string.
+    """
+    return str(uuid.uuid4())
 
 
 class Auth:
