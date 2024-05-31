@@ -69,10 +69,10 @@ class DB:
         """
         for key in kwargs:
             if not hasattr(User, key):
-                raise InvalidRequestError
+                raise InvalidRequestError()
 
         result = self._session.query(User).filter_by(**kwargs).first()
         if result is None:
-            raise NoResultFound
+            raise NoResultFound()
 
         return result
